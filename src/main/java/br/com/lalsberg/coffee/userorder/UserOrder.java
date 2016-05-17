@@ -1,7 +1,11 @@
 package br.com.lalsberg.coffee.userorder;
 
+import static javax.persistence.FetchType.EAGER;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,11 +16,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.lalsberg.coffee.User.User;
-import br.com.lalsberg.coffee.coffee.Coffee;
 import br.com.lalsberg.coffee.order.Order;
 
 @Entity
-@Table
+@Table(name = "user_order")
 public class UserOrder {
 
 	@Id
@@ -29,12 +32,12 @@ public class UserOrder {
 	@OneToOne()
 	private Order order;
 
-	@OneToMany
-	@JoinColumn(name="coffee_id")
-	private List<Coffee> coffees;
+	@OneToMany(fetch = EAGER, cascade=CascadeType.PERSIST)
+	@JoinColumn(name="user_order_id", nullable=false)
+	private List<UserOrderCoffee> coffees = new ArrayList<UserOrderCoffee>();
 
-	
-	public void addCoffees(List<Coffee> coffees) {
+
+	public void addCoffees(List<UserOrderCoffee> coffees) {
 		this.coffees.addAll(coffees);
 	}
 
