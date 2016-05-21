@@ -32,13 +32,26 @@ public class UserOrder {
 	@OneToOne()
 	private Order order;
 
-	@OneToMany(fetch = EAGER, cascade=CascadeType.PERSIST)
+	@OneToMany(fetch = EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="user_order_id", nullable=false)
 	private List<UserOrderCoffee> coffees = new ArrayList<UserOrderCoffee>();
 
 
 	public void addCoffees(List<UserOrderCoffee> coffees) {
-		this.coffees.addAll(coffees);
+		for (UserOrderCoffee orderingCoffee : coffees) {
+			boolean coffeeAlreadyOrdered = false;
+
+			for (UserOrderCoffee existingCoffee : this.coffees) {
+				if(existingCoffee.getCoffee().getId() == orderingCoffee.getCoffee().getId()) {
+					coffeeAlreadyOrdered = true;
+					existingCoffee.add(orderingCoffee.getQuantity());
+				}
+			}
+
+			if(!coffeeAlreadyOrdered) {
+				this.coffees.add(orderingCoffee);
+			}
+		}
 	}
 
 	public User getUser() {

@@ -26,4 +26,16 @@ public class UserOrderCoffee {
 	@JsonProperty("quantity")
 	private int quantity;
 
+	public Coffee getCoffee() {
+		return coffee;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void add(int quantity) {
+		this.quantity += quantity;
+	}
+
 }
