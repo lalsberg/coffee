@@ -40,4 +40,10 @@ public class UserOrderController {
 		}
 	}
 
+	@RequestMapping(method= RequestMethod.GET, value = "/orders/user/{userId}", produces = "application/json")
+	public List<UserOrderCoffee> listCoffees(@PathVariable long userId) {
+		UserOrder userOrder = userOrders.findOrCreateByUserAndOrder(new User(userId), currentOrder);
+		return userOrder.getCoffees();
+	}
+
 }

@@ -1,38 +1,42 @@
 package br.com.lalsberg.coffee.order;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Optional;
+import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.com.lalsberg.coffee.userorder.UserOrder;
 
 @RestController
 public class OrderController {
 
+	private Order currentOrder;
+	private Orders orders;
+
 	@Autowired
-	Orders orders;
+	public OrderController(@Qualifier("withUserOrders") Order currentOrder, Orders orders) {
+		this.currentOrder = currentOrder;
+		this.orders = orders;
+	}
 
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(method= RequestMethod.POST, value = "/orders", produces = "application/json")
-	public ResponseEntity create() {
-		Optional<Order> currentOrder = orders.findByActive(true);
-		if(currentOrder.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is an active order already");
-		}
+	@RequestMapping(method= RequestMethod.GET, value = "/orders", produces = "application/json")
+	public List<UserOrder> listUserOrders() {
+		return currentOrder.getUserOrders();
+	}
 
-		Order order = new Order();
-		order.setActive(true);
-		orders.save(order);
-		try {
-			return ResponseEntity.created(new URI("//order//" + order.getId())).body(order);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
+	@RequestMapping(method= RequestMethod.PUT, value = "/orders/close", produces = "application/json")
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@Transactional
+	public void close() {
+		currentOrder.setActive(false);
+		orders.save(currentOrder);
 	}
 
 }

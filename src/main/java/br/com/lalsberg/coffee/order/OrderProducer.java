@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,9 +17,23 @@ public class OrderProducer {
 		this.orders = orders;
 	}
 
-	@Bean
+	@Bean()
+	@Scope("prototype")
 	public Order currentOrder() {
 		Optional<Order> currentOrder = orders.findByActive(true);
+		if(currentOrder.isPresent()) {
+			return currentOrder.get();
+		}
+
+		Order order = new Order();
+		order.setActive(true);
+		return orders.save(order);
+	}
+
+	@Bean
+	@Scope("prototype")
+	public Order withUserOrders() {
+		Optional<Order> currentOrder = orders.findByActiveAndFetchUserOrdersEagerly(true);
 		if(currentOrder.isPresent()) {
 			return currentOrder.get();
 		}

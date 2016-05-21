@@ -11,9 +11,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.order.Order;
@@ -29,7 +32,9 @@ public class UserOrder {
 	@OneToOne()
 	private User user;
 
-	@OneToOne()
+	@ManyToOne()
+	@JoinColumn(name="order_id")
+	@JsonIgnore
 	private Order order;
 
 	@OneToMany(fetch = EAGER, cascade=CascadeType.ALL)
@@ -72,6 +77,15 @@ public class UserOrder {
 
 	public long getId() {
 		return id;
+	}
+
+	public List<UserOrderCoffee> getCoffees() {
+		return coffees;
+	}
+
+	@Override
+	public String toString() {
+		return "UserOrder [id=" + id + ", user=" + user + ", order=" + order.getId() + ", coffees=" + coffees + "]";
 	}
 
 }

@@ -28,5 +28,10 @@ public class Coffee {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Coffee [id=" + id + ", name=" + name + "]";
+	}
+
 }
