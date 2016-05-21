@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,9 @@ import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.order.Order;
 
 @RestController
+@Scope("prototype")
+//TODO: Apenas currentOrder precisa atualizar sempre, userOrders nao. ver @Lookup
+//OU controlar a criacao da order. quando lista e algm ja fechou, vai criar e mostrar uma nova order vazia... fica um pouco imprevisivel
 public class UserOrderController {
 
 	private UserOrders userOrders;

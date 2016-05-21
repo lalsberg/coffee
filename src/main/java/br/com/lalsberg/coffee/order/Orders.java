@@ -10,6 +10,6 @@ public interface Orders extends CrudRepository<Order, Long> {
 
 	Optional<Order> findByActive(boolean active);
 	
-	@Query("SELECT o FROM Order o JOIN FETCH o.userOrders WHERE o.active = (:active)")
+	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.userOrders WHERE o.active = (:active)")
 	Optional<Order> findByActiveAndFetchUserOrdersEagerly(@Param("active") boolean active);
 }
