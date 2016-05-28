@@ -30,9 +30,8 @@ public class UserOrderController {
 		this.currentOrder = currentOrder;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping(method= RequestMethod.POST, value = "/orders/user/{userId}", produces = "application/json")
-	public ResponseEntity addCoffees(@PathVariable long userId, @RequestBody List<UserOrderCoffee> coffeeOrder) {
+	public ResponseEntity<UserOrder> addCoffees(@PathVariable long userId, @RequestBody List<UserOrderCoffee> coffeeOrder) {
 		UserOrder userOrder = userOrders.findOrCreateByUserAndOrder(new User(userId), currentOrder);
 		userOrder.addCoffees(coffeeOrder);
 		userOrders.save(userOrder);
