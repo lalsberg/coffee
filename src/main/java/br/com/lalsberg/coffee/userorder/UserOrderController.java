@@ -1,5 +1,8 @@
 package br.com.lalsberg.coffee.userorder;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,7 @@ public class UserOrderController {
 		this.currentOrder = currentOrder;
 	}
 
-	@RequestMapping(method= RequestMethod.POST, value = "/orders/user/{userId}", produces = "application/json")
+	@RequestMapping(method= POST, value = "/orders/user/{userId}", produces = "application/json")
 	public ResponseEntity<UserOrder> addCoffees(@PathVariable long userId, @RequestBody List<UserOrderCoffee> coffeeOrder) {
 		UserOrder userOrder = userOrders.findOrCreateByUserAndOrder(new User(userId), currentOrder);
 		userOrder.addCoffees(coffeeOrder);
@@ -39,7 +42,7 @@ public class UserOrderController {
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(userOrder);
 	}
 
-	@RequestMapping(method= RequestMethod.GET, value = "/orders/user/{userId}", produces = "application/json")
+	@RequestMapping(method= GET, value = "/orders/user/{userId}", produces = "application/json")
 	public List<UserOrderCoffee> listCoffees(@PathVariable long userId) {
 		UserOrder userOrder = userOrders.findOrCreateByUserAndOrder(new User(userId), currentOrder);
 		return userOrder.getCoffees();
