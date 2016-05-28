@@ -7,6 +7,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.flywaydb.flyway" version "4.0.1"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
@@ -22,6 +26,22 @@ targetCompatibility = 1.8
 repositories {
     jcenter()
 }
+
+task setFlywayProperties {
+	Properties properties = new Properties()
+	properties.load(project.file('src/main/resources/application.properties').newDataInputStream())
+
+	project.ext['flyway.url'] = properties.getProperty('spring.datasource.url')
+	project.ext['flyway.user'] = properties.getProperty('spring.datasource.username')
+	project.ext['flyway.password'] = properties.getProperty('spring.datasource.password')
+
+	project.ext['flyway.sqlMigrationPrefix'] = properties.getProperty('flyway.sqlMigrationPrefix')
+	project.ext['flyway.sqlMigrationSeparator'] = properties.getProperty('flyway.sqlMigrationSeparator')
+	project.ext['flyway.sqlMigrationSuffix'] = properties.getProperty('flyway.sqlMigrationSuffix')
+	project.ext['flyway.baselineVersion'] = properties.getProperty('flyway.baselineVersion')
+}
+
+flywayMigrate.mustRunAfter setFlywayProperties
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
