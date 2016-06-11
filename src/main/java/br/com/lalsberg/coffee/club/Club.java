@@ -61,4 +61,8 @@ public class Club {
 		members.add(clubUser);
 	}
 
+	public boolean isOwner(long userId) {
+		return owner.getId() == userId;
+	}
+
 }

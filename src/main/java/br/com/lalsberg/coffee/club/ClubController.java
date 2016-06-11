@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.lalsberg.coffee.User.User;
+import br.com.lalsberg.coffee.login.LoggedUser;
 
 @RestController
 public class ClubController {
@@ -35,6 +37,11 @@ public class ClubController {
 	@RequestMapping(method= RequestMethod.POST, value = "/clubs/{clubId}/members", produces = "application/json")
 	public ResponseEntity<Void> addMembers(@PathVariable long clubId, @RequestBody List<Long> membersIds) {
 		Club club = clubs.findOne(clubId);
+
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication();
+		if(!club.isOwner(loggedUser.getId())) {
+			return ResponseEntity.notFound().build();
+		}
 
 		membersIds.forEach(memberId -> {
 			ClubUser clubUser = new ClubUser(club, new User(memberId));
