@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.lalsberg.coffee.User.User;
-import br.com.lalsberg.coffee.login.LoggedUser;
+import br.com.lalsberg.coffee.security.LoggedUser;
 
 @RestController
 public class ClubController {
@@ -38,7 +38,8 @@ public class ClubController {
 	public ResponseEntity<Void> addMembers(@PathVariable long clubId, @RequestBody List<Long> membersIds) {
 		Club club = clubs.findOne(clubId);
 
-		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication();
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 		if(!club.isOwner(loggedUser.getId())) {
 			return ResponseEntity.notFound().build();
 		}

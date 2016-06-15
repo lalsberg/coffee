@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.User.Users;
+import br.com.lalsberg.coffee.security.Token;
 
 @RestController
 public class LoginController {
@@ -25,7 +26,6 @@ public class LoginController {
 		this.token = token;
 	}
 
-	@PermitEndpoint
 	@RequestMapping(method = POST, path = "/authenticate")
 	public String authenticate(@RequestParam String email, @RequestParam String password) {
 		Optional<User> user = users.findByEmail(email);

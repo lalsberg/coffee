@@ -1,3 +1,9 @@
+//$.ajaxSetup({
+//  headers: {
+//    'Authorization': Cookies.get('jwtToken')
+//  }
+//});
+
 $("#btnLogin").click(function() {
 
 	$.post("http://localhost:8080/authenticate", 
@@ -6,6 +12,6 @@ $("#btnLogin").click(function() {
 			  password : $("#password").val() 
 			}, function(token) {
 				Cookies.set('jwtToken', token);
-				window.location.replace("/index.html");
+				window.location.replace("/pages/index.html");
 			});
 });
