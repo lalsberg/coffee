@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import br.com.lalsberg.coffee.order.Order;
 import br.com.lalsberg.coffee.user.User;
 
 @Entity
@@ -29,6 +30,9 @@ public class Club {
 
 	@OneToMany(mappedBy = "club", cascade = CascadeType.MERGE)
 	private List<ClubUser> members = new ArrayList<ClubUser>();
+
+	@OneToMany(mappedBy = "club", cascade = CascadeType.MERGE)
+	private List<Order> orders = new ArrayList<Order>();
 
 	public Club(User owner, String name) {
 		this.owner = owner;

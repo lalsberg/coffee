@@ -3,10 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <title>Coffee - Index</title>
+<link href="../css/bootstrap/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
-<h1>Temp</h1>
+	<div class="panel panel-primary" style="width: 302px">
+		<div class="panel-heading">Cafezeiros</div>
+		<div class="panel-body">
+			<p>Compra iniciada em dd/MM hh:mm</p>
+		</div>
+		<div class="panel panel-default" style="width: 300px">
+			<div class="panel-heading">Meu carrinho</div>
+	
+			<!-- List group -->
+			<ul class="list-group" id="orderedCoffees"></ul>
+			<div class="panel-heading">Adicionar:</div>
+			<ul class="list-group" id="coffees" style="overflow: scroll; height: 200px;"></ul>
+		</div>
+		<button type="button" class="btn btn-lg btn-primary btn-block">Fechar pedido</button>
+	</div>
 
+	<script src="../js/jquery-2.2.4.min.js"></script>
+	<script src="../js/bootstrap/bootstrap.min.js"></script>
+	<script src="../js/index.js"></script>
 </body>
 </html>

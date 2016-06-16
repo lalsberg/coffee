@@ -1,50 +1,66 @@
 package br.com.lalsberg.coffee.userorder;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.lalsberg.coffee.order.Order;
+import br.com.lalsberg.coffee.order.Orders;
 import br.com.lalsberg.coffee.user.User;
 
 @RestController
-@Scope("prototype")
+//@Scope("prototype")
 //TODO: Apenas currentOrder precisa atualizar sempre, userOrders nao. ver @Lookup
 //OU controlar a criacao da order. quando lista e algm ja fechou, vai criar e mostrar uma nova order vazia... fica um pouco imprevisivel
 public class UserOrderController {
 
 	private UserOrders userOrders;
-	private Order currentOrder;
+	private Orders orders;
+//	private Order currentOrder;
+
+//	@Autowired
+//	public UserOrderController(UserOrders userOrders, Order currentOrder) {
+//		this.userOrders = userOrders;
+//		this.currentOrder = currentOrder;
+//	}
 
 	@Autowired
-	public UserOrderController(UserOrders userOrders, Order currentOrder) {
+	public UserOrderController(UserOrders userOrders) {
 		this.userOrders = userOrders;
-		this.currentOrder = currentOrder;
 	}
 
-	@RequestMapping(method= POST, value = "/orders/user/{userId}", produces = "application/json")
-	public ResponseEntity<UserOrder> addCoffees(@PathVariable long userId, @RequestBody List<UserOrderCoffee> coffeeOrder) {
-		UserOrder userOrder = userOrders.findOrCreateByUserAndOrder(new User(userId), currentOrder);
-		userOrder.addCoffees(coffeeOrder);
-		userOrders.save(userOrder);
+//	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
+	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
+//	public ResponseEntity<UserOrder> addCoffees(@PathVariable long clubId, @PathVariable long userId, @RequestBody List<UserOrderCoffee> coffeeOrder) {
+	public ResponseEntity<UserOrderCoffee> addCoffee(@PathVariable long clubId, @PathVariable long userId, @RequestBody UserOrderCoffee coffeeOrder) {
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(1, userId);
+		if(userOrder.isPresent()) {
+			userOrder.get().addCoffee(coffeeOrder);
+		}
+		//else create userorder com os coffees
 
-		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(userOrder);
+		UserOrderCoffee updatedCoffeeOrder = userOrder.get().getCoffee(coffeeOrder.getCoffee()).get();
+
+		userOrders.save(userOrder.get());
+		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(updatedCoffeeOrder);
 	}
 
-	@RequestMapping(method= GET, value = "/orders/user/{userId}", produces = "application/json")
-	public List<UserOrderCoffee> listCoffees(@PathVariable long userId) {
-		UserOrder userOrder = userOrders.findOrCreateByUserAndOrder(new User(userId), currentOrder);
-		return userOrder.getCoffees();
+	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
+	public List<UserOrderCoffee> listCoffees(@PathVariable long clubId, @PathVariable long userId) {
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+		if(userOrder.isPresent()) {
+			return userOrder.get().getCoffees();
+		}
+		return new ArrayList<>();
 	}
 
+	
 }

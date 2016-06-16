@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.lalsberg.coffee.user.User;
 
 @Entity
@@ -17,6 +19,7 @@ public class ClubUser {
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "club_id")
+	@JsonIgnore
 	private Club club;
 
 	@Id

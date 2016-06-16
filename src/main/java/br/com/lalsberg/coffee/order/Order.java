@@ -9,9 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.lalsberg.coffee.club.Club;
 import br.com.lalsberg.coffee.userorder.UserOrder;
 
 @Entity
@@ -26,6 +28,9 @@ public class Order {
 
 	@OneToMany(fetch = LAZY, mappedBy = "order")
 	private List<UserOrder> userOrders = new ArrayList<UserOrder>();
+
+	@ManyToOne
+	private Club club;
 
 	public long getId() {
 		return id;

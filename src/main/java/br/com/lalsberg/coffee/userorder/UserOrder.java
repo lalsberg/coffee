@@ -4,6 +4,7 @@ import static javax.persistence.FetchType.EAGER;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import br.com.lalsberg.coffee.coffee.Coffee;
 import br.com.lalsberg.coffee.order.Order;
 import br.com.lalsberg.coffee.user.User;
 
@@ -42,20 +44,18 @@ public class UserOrder {
 	private List<UserOrderCoffee> coffees = new ArrayList<UserOrderCoffee>();
 
 
-	public void addCoffees(List<UserOrderCoffee> coffees) {
-		for (UserOrderCoffee orderingCoffee : coffees) {
-			boolean coffeeAlreadyOrdered = false;
+	public void addCoffee(UserOrderCoffee orderingCoffee) {
+		boolean coffeeAlreadyOrdered = false;
 
-			for (UserOrderCoffee existingCoffee : this.coffees) {
-				if(existingCoffee.getCoffee().getId() == orderingCoffee.getCoffee().getId()) {
-					coffeeAlreadyOrdered = true;
-					existingCoffee.add(orderingCoffee.getQuantity());
-				}
+		for (UserOrderCoffee existingCoffee : this.coffees) {
+			if(existingCoffee.getCoffee().getId() == orderingCoffee.getCoffee().getId()) {
+				coffeeAlreadyOrdered = true;
+				existingCoffee.add(orderingCoffee.getQuantity());
 			}
+		}
 
-			if(!coffeeAlreadyOrdered) {
-				this.coffees.add(orderingCoffee);
-			}
+		if(!coffeeAlreadyOrdered) {
+			this.coffees.add(orderingCoffee);
 		}
 	}
 
@@ -86,6 +86,10 @@ public class UserOrder {
 	@Override
 	public String toString() {
 		return "UserOrder [id=" + id + ", user=" + user + ", order=" + order.getId() + ", coffees=" + coffees + "]";
+	}
+
+	public Optional<UserOrderCoffee> getCoffee(Coffee coffee) {
+		return coffees.stream().filter(findCoffee -> findCoffee.getCoffee().getId() == coffee.getId()).findAny();
 	}
 
 }
