@@ -1,4 +1,4 @@
-package br.com.lalsberg.coffee.User;
+package br.com.lalsberg.coffee.user;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.order.Order;
+import br.com.lalsberg.coffee.user.User;
 
 @RestController
 @Scope("prototype")

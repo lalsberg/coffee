@@ -18,8 +18,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.order.Order;
+import br.com.lalsberg.coffee.user.User;
 
 @Entity
 @Table(name = "user_order")

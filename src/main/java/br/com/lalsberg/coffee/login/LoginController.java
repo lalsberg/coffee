@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.lalsberg.coffee.User.User;
-import br.com.lalsberg.coffee.User.Users;
 import br.com.lalsberg.coffee.security.Token;
+import br.com.lalsberg.coffee.user.User;
+import br.com.lalsberg.coffee.user.Users;
 
 @RestController
 public class LoginController {

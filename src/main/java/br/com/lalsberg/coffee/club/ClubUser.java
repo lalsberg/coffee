@@ -7,7 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.lalsberg.coffee.User.User;
+import br.com.lalsberg.coffee.user.User;
 
 @Entity
 @Table(name = "club_user")

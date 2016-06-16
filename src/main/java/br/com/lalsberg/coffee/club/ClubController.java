@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.security.LoggedUser;
+import br.com.lalsberg.coffee.user.User;
 
 @RestController
 public class ClubController {

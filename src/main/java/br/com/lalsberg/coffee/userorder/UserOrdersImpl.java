@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.order.Order;
+import br.com.lalsberg.coffee.user.User;
 
 public class UserOrdersImpl implements UserOrdersCustom {
 

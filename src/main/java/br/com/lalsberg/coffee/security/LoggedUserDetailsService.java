@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.lalsberg.coffee.User.User;
-import br.com.lalsberg.coffee.User.Users;
+import br.com.lalsberg.coffee.user.User;
+import br.com.lalsberg.coffee.user.Users;
 
 @Service
 public class LoggedUserDetailsService implements UserDetailsService {
