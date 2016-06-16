@@ -33,7 +33,7 @@ public class LoginController {
 			//404
 		}
 		if (BCrypt.checkpw(password, user.get().getPassword())) {
-			return token.getTokenFromEmail(email);
+			return token.generateTokenFromEmail(email);
 		}
 		return null; //error
 	}

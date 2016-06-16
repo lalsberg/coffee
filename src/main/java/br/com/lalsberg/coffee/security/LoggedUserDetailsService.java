@@ -12,23 +12,28 @@ import br.com.lalsberg.coffee.User.User;
 import br.com.lalsberg.coffee.User.Users;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class LoggedUserDetailsService implements UserDetailsService {
 
 	private Users users;
 
 	@Autowired
-	public UserDetailsServiceImpl(Users users) {
+	public LoggedUserDetailsService(Users users) {
 		this.users = users;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> user = users.findByEmail(username);
+		Optional<User> userOptional = users.findByEmail(username);
 
-		if (!user.isPresent()) {
+		if (!userOptional.isPresent()) {
 			throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
 		} else {
-			return LoggedUserFactory.create(user.get());
+			User user = userOptional.get();
+			return new LoggedUser(user.getId(), user.getEmail(), user.getPassword(), user.getEmail(),
+					// theUser.getLastPasswordReset(),
+					null,
+					// AuthorityUtils.commaSeparatedStringToAuthorityList(theUser.getAuthorities())
+					null);
 		}
 	}
 
