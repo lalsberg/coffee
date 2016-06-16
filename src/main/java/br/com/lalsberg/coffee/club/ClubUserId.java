@@ -6,28 +6,28 @@ public class ClubUserId implements Serializable {
 
 	private static final long serialVersionUID = -9072838720564049038L;
 
-	private int club;
-	private int user;
+	private long club;
+	private long user;
 
 	public long getClub() {
 		return club;
 	}
 
-	public void setClub(int club) {
+	public void setClub(long club) {
 		this.club = club;
 	}
 
-	public int getUser() {
+	public long getUser() {
 		return user;
 	}
 
-	public void setUser(int user) {
+	public void setUser(long user) {
 		this.user = user;
 	}
 
 	@Override
     public int hashCode() {
-        return club + user;
+        return Long.valueOf(club).intValue() + Long.valueOf(user).intValue();
     }
  
     @Override

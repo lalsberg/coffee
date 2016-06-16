@@ -15,15 +15,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.lalsberg.coffee.security.LoggedUser;
 import br.com.lalsberg.coffee.user.User;
+import br.com.lalsberg.coffee.user.Users;
 
 @RestController
 public class ClubController {
 
 	private Clubs clubs;
+	private Users users;
 
 	@Autowired
-	public ClubController(Clubs clubs) {
+	public ClubController(Clubs clubs, Users users) {
 		this.clubs = clubs;
+		this.users = users;
 	}
 
 	@RequestMapping(method= RequestMethod.POST, value = "/clubs/user/{userId}", produces = "application/json")
@@ -45,9 +48,7 @@ public class ClubController {
 		}
 
 		membersIds.forEach(memberId -> {
-			ClubUser clubUser = new ClubUser(club, new User(memberId));
-			//TODO pq preciso setar o club no clubuser e depois usar ele pra addmember?
-			club.addMember(clubUser);
+			club.addMember(users.getOne(memberId));
 		});
 
 		clubs.save(club);

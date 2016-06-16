@@ -57,7 +57,8 @@ public class Club {
 		return members;
 	}
 
-	public void addMember(ClubUser clubUser) {
+	public void addMember(User user) {
+		ClubUser clubUser = new ClubUser(this, user);
 		members.add(clubUser);
 	}
 
