@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.lalsberg.coffee.order.Orders;
-import br.com.lalsberg.coffee.user.User;
+import br.com.lalsberg.coffee.coffee.Coffee;
 
 @RestController
 //@Scope("prototype")
@@ -23,7 +22,6 @@ import br.com.lalsberg.coffee.user.User;
 public class UserOrderController {
 
 	private UserOrders userOrders;
-	private Orders orders;
 //	private Order currentOrder;
 
 //	@Autowired
@@ -37,9 +35,7 @@ public class UserOrderController {
 		this.userOrders = userOrders;
 	}
 
-//	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
 	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
-//	public ResponseEntity<UserOrder> addCoffees(@PathVariable long clubId, @PathVariable long userId, @RequestBody List<UserOrderCoffee> coffeeOrder) {
 	public ResponseEntity<UserOrderCoffee> addCoffee(@PathVariable long clubId, @PathVariable long userId, @RequestBody UserOrderCoffee coffeeOrder) {
 		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(1, userId);
 		if(userOrder.isPresent()) {
@@ -51,6 +47,17 @@ public class UserOrderController {
 
 		userOrders.save(userOrder.get());
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(updatedCoffeeOrder);
+	}
+
+	@RequestMapping(method= RequestMethod.DELETE, value = "/club/{clubId}/orders/user/{userId}/coffee/{coffeeId}", produces = "application/json")
+	public ResponseEntity<Void> removeCoffee(@PathVariable long clubId, @PathVariable long userId, @PathVariable long coffeeId) {
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(1, userId);
+		Coffee coffee = new Coffee();
+		coffee.setId(coffeeId);
+		userOrder.get().removeCoffee(coffee);
+
+		userOrders.save(userOrder.get());
+		return ResponseEntity.ok().build();
 	}
 
 	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")

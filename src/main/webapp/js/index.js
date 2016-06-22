@@ -14,11 +14,24 @@ $(function() {
 				"<li class='list-group-item'>" +
 					"<input type='text' name='coffeeQuantity' value='" + this.quantity + "'></input> " + 
 					this.coffee.name + 
+					"<button type='button' class='btn btn-danger btn-block' style='width: 80px'>Remover</button>" +
 					"<input type='hidden' name='coffeeId' value='" + this.coffee.id + "'>" +
 				"</li>";
 		});
 
 		$("#orderedCoffees").append(itemsHtml);
+
+		$("#orderedCoffees .btn-danger").click(function() {
+			var removeButton = $(this);
+			var coffeeId = removeButton.siblings("input[name='coffeeId']").val();
+
+			$.ajax("http://localhost:8080/club/1/orders/user/1/coffee/" + coffeeId, {
+				type : 'DELETE',
+				success: function() {
+					removeButton.parent().remove();
+				}
+			});
+		});
 	});
 
 	$.get("http://localhost:8080/coffees", function(coffees) {
@@ -32,8 +45,6 @@ $(function() {
 				"</li>";
 		});
 		$("#coffees").append(itemsHtml);
-
-
 
 		$("#coffees .list-group-item").change(function() {
 			var coffeeId = $(this).find("input[name='coffeeId']").val();

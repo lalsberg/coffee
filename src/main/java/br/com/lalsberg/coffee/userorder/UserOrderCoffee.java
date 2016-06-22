@@ -26,6 +26,8 @@ public class UserOrderCoffee {
 	@JsonProperty("quantity")
 	private int quantity;
 
+	private boolean deleted;
+
 	public Coffee getCoffee() {
 		return coffee;
 	}
@@ -34,8 +36,16 @@ public class UserOrderCoffee {
 		return quantity;
 	}
 
-	public void add(int quantity) {
+	public void increment(int quantity) {
 		this.quantity += quantity;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void delete() {
+		this.deleted = true;
 	}
 
 }

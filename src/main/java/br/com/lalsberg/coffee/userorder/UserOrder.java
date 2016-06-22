@@ -47,10 +47,10 @@ public class UserOrder {
 	public void addCoffee(UserOrderCoffee orderingCoffee) {
 		boolean coffeeAlreadyOrdered = false;
 
-		for (UserOrderCoffee existingCoffee : this.coffees) {
+		for (UserOrderCoffee existingCoffee : getCoffees()) {
 			if(existingCoffee.getCoffee().getId() == orderingCoffee.getCoffee().getId()) {
 				coffeeAlreadyOrdered = true;
-				existingCoffee.add(orderingCoffee.getQuantity());
+				existingCoffee.increment(orderingCoffee.getQuantity());
 			}
 		}
 
@@ -80,16 +80,29 @@ public class UserOrder {
 	}
 
 	public List<UserOrderCoffee> getCoffees() {
-		return coffees;
+		//TODO: nao consegui buscar somente ativos pelo metodo do spring data jpa
+		List<UserOrderCoffee> activeCoffees = new ArrayList<UserOrderCoffee>();
+		for (UserOrderCoffee coffee : coffees) {
+			if(!coffee.isDeleted()) {
+				activeCoffees.add(coffee);
+			}
+		}
+
+		return activeCoffees;
+	}
+
+	public Optional<UserOrderCoffee> getCoffee(Coffee coffee) {
+		return getCoffees().stream().filter(findCoffee -> findCoffee.getCoffee().getId() == coffee.getId()).findAny();
+	}
+
+	public void removeCoffee(Coffee coffee) {
+		UserOrderCoffee userOrderCoffee = getCoffees().stream().filter(findCoffee -> findCoffee.getCoffee().getId() == coffee.getId()).findAny().get();
+		userOrderCoffee.delete();
 	}
 
 	@Override
 	public String toString() {
 		return "UserOrder [id=" + id + ", user=" + user + ", order=" + order.getId() + ", coffees=" + coffees + "]";
-	}
-
-	public Optional<UserOrderCoffee> getCoffee(Coffee coffee) {
-		return coffees.stream().filter(findCoffee -> findCoffee.getCoffee().getId() == coffee.getId()).findAny();
 	}
 
 }
