@@ -3,6 +3,8 @@ package br.com.lalsberg.coffee.userorder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,25 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.lalsberg.coffee.coffee.Coffee;
+import br.com.lalsberg.coffee.coffee.Coffees;
 
 @RestController
-//@Scope("prototype")
-//TODO: Apenas currentOrder precisa atualizar sempre, userOrders nao. ver @Lookup
-//OU controlar a criacao da order. quando lista e algm ja fechou, vai criar e mostrar uma nova order vazia... fica um pouco imprevisivel
 public class UserOrderController {
 
 	private UserOrders userOrders;
-//	private Order currentOrder;
-
-//	@Autowired
-//	public UserOrderController(UserOrders userOrders, Order currentOrder) {
-//		this.userOrders = userOrders;
-//		this.currentOrder = currentOrder;
-//	}
+	private Coffees coffees;
 
 	@Autowired
-	public UserOrderController(UserOrders userOrders) {
+	public UserOrderController(UserOrders userOrders, Coffees coffees) {
 		this.userOrders = userOrders;
+		this.coffees = coffees;
 	}
 
 	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
@@ -41,12 +36,27 @@ public class UserOrderController {
 		if(userOrder.isPresent()) {
 			userOrder.get().addCoffee(coffeeOrder);
 		}
-		//else create userorder com os coffees
+		//TODO else create userorder com os coffees
 
 		UserOrderCoffee updatedCoffeeOrder = userOrder.get().getCoffee(coffeeOrder.getCoffee()).get();
 
 		userOrders.save(userOrder.get());
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(updatedCoffeeOrder);
+	}
+
+	@RequestMapping(method= RequestMethod.PUT, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
+	public ResponseEntity<Void> changeCoffeeQuantity(@PathVariable long clubId, @PathVariable long userId, @RequestBody UserOrderCoffee coffeeOrder) {
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(1, userId);
+		if(userOrder.isPresent()) {
+			if(coffeeOrder.getQuantity() == 0) {
+				userOrder.get().removeCoffee(coffeeOrder.getCoffee());
+			} else {
+				userOrder.get().changeCoffeeQuantity(coffeeOrder);
+			}
+		} //TODO else erro
+
+		userOrders.save(userOrder.get());
+		return ResponseEntity.ok().build();
 	}
 
 	@RequestMapping(method= RequestMethod.DELETE, value = "/club/{clubId}/orders/user/{userId}/coffee/{coffeeId}", produces = "application/json")
@@ -69,5 +79,15 @@ public class UserOrderController {
 		return new ArrayList<>();
 	}
 
-	
+	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}/unorderedCoffees", produces = "application/json")
+	public List<Coffee> listUnorderedCoffees(@PathVariable long clubId, @PathVariable long userId) {
+		List<Coffee> allCoffees = (List<Coffee>) coffees.findAll();
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+		if(userOrder.isPresent()) {
+			Set<Long> orderedCoffeesIds = userOrder.get().getCoffees().stream().map(orderedCoffee -> orderedCoffee.getCoffee().getId()).collect(Collectors.toSet());
+			List<Coffee> unorderedCoffees = allCoffees.stream().filter(coffee -> !orderedCoffeesIds.contains(coffee.getId())).collect(Collectors.toList());
+			return unorderedCoffees;
+		}
+		return null; //TODO erro
+	}
 }

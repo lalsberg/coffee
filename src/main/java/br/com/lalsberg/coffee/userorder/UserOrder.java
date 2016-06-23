@@ -45,17 +45,14 @@ public class UserOrder {
 
 
 	public void addCoffee(UserOrderCoffee orderingCoffee) {
-		boolean coffeeAlreadyOrdered = false;
+		this.coffees.add(orderingCoffee);
+	}
 
+	public void changeCoffeeQuantity(UserOrderCoffee orderingCoffee) {
 		for (UserOrderCoffee existingCoffee : getCoffees()) {
 			if(existingCoffee.getCoffee().getId() == orderingCoffee.getCoffee().getId()) {
-				coffeeAlreadyOrdered = true;
-				existingCoffee.increment(orderingCoffee.getQuantity());
+				existingCoffee.setQuantity(orderingCoffee.getQuantity());
 			}
-		}
-
-		if(!coffeeAlreadyOrdered) {
-			this.coffees.add(orderingCoffee);
 		}
 	}
 

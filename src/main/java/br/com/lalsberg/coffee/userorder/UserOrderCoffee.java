@@ -36,8 +36,8 @@ public class UserOrderCoffee {
 		return quantity;
 	}
 
-	public void increment(int quantity) {
-		this.quantity += quantity;
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 
 	public boolean isDeleted() {
