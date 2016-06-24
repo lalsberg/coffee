@@ -12,6 +12,7 @@ public class Coffee {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
+	private double price;
 
 	public long getId() {
 		return id;
@@ -29,9 +30,17 @@ public class Coffee {
 		this.name = name;
 	}
 
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
 	@Override
 	public String toString() {
-		return "Coffee [id=" + id + ", name=" + name + "]";
+		return "Coffee [id=" + id + ", name=" + name + ", price=" + price + "]";
 	}
 
 }
