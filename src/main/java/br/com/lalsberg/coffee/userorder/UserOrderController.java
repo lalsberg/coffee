@@ -71,12 +71,12 @@ public class UserOrderController {
 	}
 
 	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
-	public List<UserOrderCoffee> listCoffees(@PathVariable long clubId, @PathVariable long userId) {
+	public UserOrder get(@PathVariable long clubId, @PathVariable long userId) {
 		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
 		if(userOrder.isPresent()) {
-			return userOrder.get().getCoffees();
+			return userOrder.get();
 		}
-		return new ArrayList<>();
+		return null;
 	}
 
 	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}/unorderedCoffees", produces = "application/json")
@@ -89,5 +89,11 @@ public class UserOrderController {
 			return unorderedCoffees;
 		}
 		return null; //TODO erro
+	}
+
+	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}/price", produces = "application/json")
+	public double getPrice(@PathVariable long clubId, @PathVariable long userId) {
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+		return userOrder.get().getPrice();
 	}
 }

@@ -7,17 +7,19 @@
 </head>
 <body>
 
-	<div class="panel panel-primary" style="width: 302px">
+	<div class="panel panel-primary" style="width: 500px;  margin-left: 500px; margin-top: 20px">
 		<div class="panel-heading">Cafezeiros</div>
 		<div class="panel-body">
 			<p>Compra iniciada em dd/MM hh:mm</p>
+			<label style="font-weight:normal">Total: R$</label>
+			<label class="cartPrice" style="font-weight:normal"></label>
 		</div>
-		<div class="panel panel-default" style="width: 300px">
+		<div class="panel panel-default" style="width: 300px; margin-left: 95px">
 			<div class="panel-heading">Meu carrinho</div>
 	
 			<!-- List group -->
 			<ul class="list-group" id="orderedCoffees"></ul>
-			<div class="panel-heading">Adicionar:</div>
+			<div class="panel-heading" style="margin-top: 30px">Adicionar:</div>
 			<ul class="list-group" id="coffees" style="overflow: scroll; height: 200px;"></ul>
 		</div>
 		<button type="button" class="btn btn-lg btn-primary btn-block">Fechar pedido</button>
