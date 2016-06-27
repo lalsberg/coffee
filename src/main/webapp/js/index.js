@@ -1,12 +1,5 @@
 $(function() {
 
-	var userClubsIds = [];
-	$.get("http://localhost:8080/users/1/clubs", function(clubs) {
-		$(clubs).each(function() {
-			userClubsIds.push(this.id)
-		});
-	});
-
 	$.get("http://localhost:8080/club/1/orders/user/1", function(userOrder) {
 		var itemsHtml = "";
 		$(userOrder.coffees).each(function() {
