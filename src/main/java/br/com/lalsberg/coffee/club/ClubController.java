@@ -29,9 +29,11 @@ public class ClubController {
 		this.users = users;
 	}
 
-	@RequestMapping(method= RequestMethod.POST, value = "/clubs/user/{userId}", produces = "application/json")
-	public ResponseEntity<Club> create(@PathVariable long userId, @RequestParam String name) {
-		User owner = new User(userId);
+	@RequestMapping(method= RequestMethod.POST, path = "/clubs", produces = "application/json")
+	public ResponseEntity<Club> create(@RequestParam String name) {
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		User owner = new User(loggedUser.getId());
 		Club club = clubs.save(new Club(owner, name));
 
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(club);
