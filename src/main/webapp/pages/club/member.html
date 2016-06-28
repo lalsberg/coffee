@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Clubb - Create Club</title>
+<link href="../../css/bootstrap/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<script src="../../js/jquery-2.2.4.min.js"></script>
+	<script> 
+    $(function(){
+      $("#menu").load("../tags/menu.html"); 
+    });
+    </script>
+<div id="menu"></div>
+
+<div class="container" style="width:400px; margin-top:20px">
+
+	<label for="name">Add member</label>
+	<input type="text" name="name" id="name" class="form-control" placeholder='email' autofocus required>
+	<button type="button" id="btnAddMember" class="btn btn-lg btn-primary btn-block" style="margin-top: 10px">Add Member</button>
+
+</div>
+
+<script src="../../js/bootstrap/bootstrap.min.js"></script>
+<script src="../../js/club.js"></script>
+</body>
+</html>
