@@ -2,6 +2,8 @@ package br.com.lalsberg.coffee.login;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +29,16 @@ public class LoginController {
 	}
 
 	@RequestMapping(method = POST, path = "/authenticate")
-	public String authenticate(@RequestParam String email, @RequestParam String password) {
+	public Map<String, String> authenticate(@RequestParam String email, @RequestParam String password) {
 		Optional<User> user = users.findByEmail(email);
 		if(!user.isPresent()) {
 			//404
 		}
 		if (BCrypt.checkpw(password, user.get().getPassword())) {
-			return token.generateTokenFromEmail(email);
+			Map<String, String> response = new HashMap<String, String>();
+			response.put("userId", Long.toString(user.get().getId()));
+			response.put("token", token.generateTokenFromEmail(email));
+			return response;
 		}
 		return null; //error
 	}

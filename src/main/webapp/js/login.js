@@ -9,8 +9,9 @@ $("#btnLogin").click(function() {
 	$.post("http://localhost:8080/authenticate", {
 		email : $("#email").val(),
 		password : $("#password").val()
-	}, function(token) {
-		Cookies.set('jwtToken', token);
+	}, function(response) {
+		Cookies.set('userId', response.userId);
+		Cookies.set('jwtToken', response.token);
 		window.location.replace("/pages/index.html");
 	});
 });

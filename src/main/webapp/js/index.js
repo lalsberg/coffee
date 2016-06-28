@@ -1,6 +1,8 @@
 $(function() {
 
-	$.get("http://localhost:8080/club/1/orders/user/1", function(userOrder) {
+	var userId = Cookies.get('userId');
+
+	$.get("http://localhost:8080/club/1/orders/user/" + userId, function(userOrder) {
 		var itemsHtml = "";
 		$(userOrder.coffees).each(function() {
 			itemsHtml += 
@@ -18,7 +20,7 @@ $(function() {
 		$(".cartPrice").text(userOrder.price);
 	});
 
-	$.get("http://localhost:8080/club/1/orders/user/1/unorderedCoffees", function(coffees) {
+	$.get("http://localhost:8080/club/1/orders/user/" + userId + "/unorderedCoffees", function(coffees) {
 		var itemsHtml = "";
 		$(coffees).each(function() {
 			itemsHtml += 
@@ -47,7 +49,7 @@ $(function() {
 			quantity: coffeeQuantity
 		};
 
-		$.ajax("http://localhost:8080/club/1/orders/user/1", { 
+		$.ajax("http://localhost:8080/club/1/orders/user/" + userId, { 
 			data: JSON.stringify(coffeeOrder),
 			contentType : 'application/json', 
 			type : 'POST', 
@@ -84,7 +86,7 @@ $(function() {
 			quantity: coffeeQuantity
 		};
 
-		$.ajax("http://localhost:8080/club/1/orders/user/1", { 
+		$.ajax("http://localhost:8080/club/1/orders/user/" + userId, { 
 			data: JSON.stringify(coffeeOrder),
 			contentType : 'application/json', 
 			type : 'PUT', 
@@ -115,7 +117,7 @@ $(function() {
 		var coffeePrice = $(this).siblings(".coffeePrice").text();
 		var coffeeQuantity = $(this).siblings("input[name='coffeeQuantity']").val();
 
-		$.ajax("http://localhost:8080/club/1/orders/user/1/coffee/" + coffeeId, {
+		$.ajax("http://localhost:8080/club/1/orders/user/" + userId + "/coffee/" + coffeeId, {
 			type : 'DELETE',
 			success: function() {
 				removeButton.parent().remove();
@@ -136,7 +138,7 @@ $(function() {
 	});
 
 	function updateCartPrice() {
-		$.get("http://localhost:8080/club/1/orders/user/1/price", function(price) {
+		$.get("http://localhost:8080/club/1/orders/user/" + userId + "/price", function(price) {
 			$(".cartPrice").text(price);
 		});
 	}
