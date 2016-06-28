@@ -1,22 +1,12 @@
 var userId = Cookies.get('userId');
 
+var selectedClub = jQuery.parseJSON(Cookies.get('club'));
+$(".selectedClubName").text(selectedClub.name);
+$(".selectedClubName").siblings("input[name='clubId']").val(selectedClub.id);
+
 $.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
 	var first = true;
 	$(clubs).each(function(index) {
-		var selectedClub;
-		if(Cookies.get('club') != undefined) {
-			selectedClub = jQuery.parseJSON(Cookies.get('club'));
-		} else {
-			selectedClub = {
-				name: clubs[0].name,
-				id: clubs[0].id
-			};
-			Cookies.set('club', selectedClub);
-		}
-
-		$(".selectedClubName").text(selectedClub.name);
-		$(".selectedClubName").siblings("input[name='clubId']").val(selectedClub.id);
-
 		if(first){
 			if(this.id != selectedClub.id) {
 				first = false;
@@ -57,3 +47,5 @@ $.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
 		window.location.reload();
 	});
 });
+
+console.log("loaded menu.js");
