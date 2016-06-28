@@ -1,18 +1,45 @@
 <nav class="navbar navbar-default">
+
 	<div class="navbar-header">
 		<a class="navbar-brand" href="/pages/index.html">Clubb</a>
 	</div>
 
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown"><a href="#" class="dropdown-toggle"
-				data-toggle="dropdown" role="button" aria-haspopup="true"
-				aria-expanded="false"> Clubs <span class="caret"></span>
-			</a>
+
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false"> Clubs 
+					<span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					<li><a href="/pages/club/create.html">Create new</a></li>
 					<li><a href="/pages/club/member.html">Members</a></li>
-				</ul></li>
+				</ul>
+			</li>
+
+			<li id="uniqueClub" style="display:none">
+				<a href="#" class='selectedClubName'></a>
+				<input type='hidden' name='clubId' value="0"/>
+			</li>
+
+			<li id="multipleClub" class="dropdown" style="display:none">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false" hidden='true'> <label class="selectedClubName"></label>
+					<input type='hidden' name='clubId' value="0"/> 
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu otherClubs">
+					<li class="anotherClub">
+						<a href="#"></a>
+						<input type='hidden' name='clubId' value="0"/>
+					</li>
+				</ul>
+			</li>
+
 		</ul>
 	</div>
+
 </nav>
+
+<script src="../../js/js.cookie.js"></script>
+<script src="../../js/menu.js"></script>
