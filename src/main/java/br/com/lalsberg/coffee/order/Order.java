@@ -1,7 +1,5 @@
 package br.com.lalsberg.coffee.order;
 
-import static javax.persistence.FetchType.LAZY;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class Order {
 
 	private boolean active;
 
-	@OneToMany(fetch = LAZY, mappedBy = "order")
+	@OneToMany(mappedBy = "order")
 	private List<UserOrder> userOrders = new ArrayList<UserOrder>();
 
 	@ManyToOne
@@ -54,7 +52,11 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", active=" + active + ", userOrders=" + userOrders + "]";
+		return "Order [id=" + id + ", active=" + active + "]";
+	}
+
+	public void setClub(Club club) {
+		this.club = club;
 	}
 
 }

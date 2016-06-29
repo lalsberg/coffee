@@ -5,40 +5,53 @@ $(function() {
 	if(Cookies.get('club') != undefined) {
 		var clubId = jQuery.parseJSON(Cookies.get('club')).id;
 	
-		$(".clubName").text(jQuery.parseJSON(Cookies.get('club')).name);
-		$.get("http://localhost:8080/club/" + clubId + "1/orders/user/" + userId, function(userOrder) {
-			var itemsHtml = "";
-			$(userOrder.coffees).each(function() {
-				itemsHtml += 
-					"<li class='list-group-item'>" +
-						"<input type='text' name='coffeeQuantity' value='" + this.quantity + "'></input> " +
-						"<label class='coffeeName' style='font-weight:normal'>" + this.coffee.name + " </label>" +
-						"<label style='font-weight:normal; margin-left: 5px'>R$ </label>" +
-						"<label class='coffeePrice' style='font-weight:normal'>" + this.coffee.price + "</label>" +
-						"<button type='button' class='btn btn-danger btn-block' style='width: 80px'>Remover</button>" +
-						"<input type='hidden' name='coffeeId' value='" + this.coffee.id + "'>" +
-					"</li>";
-			});
-	
-			$("#orderedCoffees").append(itemsHtml);
-			$(".cartPrice").text(userOrder.price);
+		getCurrentOrder(clubId, function(order) {
+			if(order != "") {
+				//TODO tudo dentro usa clubId + userId. posso usar apenas o orderId
+				showCurrentOrder();
+			} else {
+				$(".no-order").show();
+			}
 		});
-	
-		$.get("http://localhost:8080/club/" + clubId + "/orders/user/" + userId + "/unorderedCoffees", function(coffees) {
-			var itemsHtml = "";
-			$(coffees).each(function() {
-				itemsHtml += 
-					"<li class='list-group-item'> " +
-						"<input type='text' name='coffeeQuantity' value='0'></input> " +
-						"<label class='coffeeName' style='font-weight:normal'>" + this.name + " </label>" +
-						"<label style='font-weight:normal; margin-left: 5px'>R$ </label>" +
-						"<label class='coffeePrice' style='font-weight:normal'>" + this.price + "</label>" +
-						"<input type='hidden' name='coffeeId' value='" + this.id + "'>" +
-					"</li>";
+
+		function showCurrentOrder() {
+			$(".clubName").text(jQuery.parseJSON(Cookies.get('club')).name);
+			$.get("http://localhost:8080/club/" + clubId + "/orders/user/" + userId, function(userOrder) {
+				var itemsHtml = "";
+				$(userOrder.coffees).each(function() {
+					itemsHtml += 
+						"<li class='list-group-item'>" +
+							"<input type='text' name='coffeeQuantity' value='" + this.quantity + "'></input> " +
+							"<label class='coffeeName' style='font-weight:normal'>" + this.coffee.name + " </label>" +
+							"<label style='font-weight:normal; margin-left: 5px'>R$ </label>" +
+							"<label class='coffeePrice' style='font-weight:normal'>" + this.coffee.price + "</label>" +
+							"<button type='button' class='btn btn-danger btn-block' style='width: 80px'>Remover</button>" +
+							"<input type='hidden' name='coffeeId' value='" + this.coffee.id + "'>" +
+						"</li>";
+				});
+		
+				$("#orderedCoffees").append(itemsHtml);
+				$(".cartPrice").text(userOrder.price);
 			});
-			$("#coffees").append(itemsHtml);
-		});
-	
+		
+			$.get("http://localhost:8080/club/" + clubId + "/orders/user/" + userId + "/unorderedCoffees", function(coffees) {
+				var itemsHtml = "";
+				$(coffees).each(function() {
+					itemsHtml += 
+						"<li class='list-group-item'> " +
+							"<input type='text' name='coffeeQuantity' value='0'></input> " +
+							"<label class='coffeeName' style='font-weight:normal'>" + this.name + " </label>" +
+							"<label style='font-weight:normal; margin-left: 5px'>R$ </label>" +
+							"<label class='coffeePrice' style='font-weight:normal'>" + this.price + "</label>" +
+							"<input type='hidden' name='coffeeId' value='" + this.id + "'>" +
+						"</li>";
+				});
+				$("#coffees").append(itemsHtml);
+			});
+
+			$(".club-panel").show();
+		}
+
 		$("#coffees").on("change", ".list-group-item", function() {
 			var coffeeId = $(this).find("input[name='coffeeId']").val();
 			var coffeeQuantityInput = $(this).find("input[name='coffeeQuantity']");
@@ -146,11 +159,25 @@ $(function() {
 				$(".cartPrice").text(price);
 			});
 		}
-		
-		$(".club-panel").show();
+
+		$(".btn-init-order").click(function() {
+			$.ajax({
+				url: "http://localhost:8080/clubs/" + clubId + "/orders",
+				type: "PUT",
+				success: function(order) {
+					$(".no-order").hide();
+					showCurrentOrder();
+				}
+			});
+		});
+
 	} else {
 		$(".no-club").show();
 	}
 });
 
-console.log("loaded index.js");
+function getCurrentOrder(clubId, callback) {
+	$.get("http://localhost:8080/clubs/" + clubId + "/order", function(order) {
+		callback(order);
+	});
+}

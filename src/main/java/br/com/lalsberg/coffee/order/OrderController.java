@@ -1,45 +1,45 @@
 package br.com.lalsberg.coffee.order;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.lalsberg.coffee.userorder.UserOrder;
+import br.com.lalsberg.coffee.club.Clubs;
 
 @RestController
-@Scope("prototype")
-//TODO: Apenas currentOrder precisa atualizar sempre, orders nao. ver @Lookup
-//OU controlar a criacao da order. quando lista e algm ja fechou, vai criar e mostrar uma nova order vazia... fica um pouco imprevisivel
 public class OrderController {
 
-	private Order currentOrder;
 	private Orders orders;
+	private Clubs clubs;
 
 	@Autowired
-	public OrderController(@Qualifier("withUserOrders") Order currentOrder, Orders orders) {
-		this.currentOrder = currentOrder;
+	public OrderController(Orders orders, Clubs clubs) {
 		this.orders = orders;
+		this.clubs = clubs;
 	}
 
-	@RequestMapping(method= GET, value = "/orders", produces = "application/json")
-	public List<UserOrder> listUserOrders() {
-		return currentOrder.getUserOrders();
+	@RequestMapping(method= RequestMethod.GET, value = "/clubs/{clubId}/order")
+	public Order getCurrent(@PathVariable long clubId) {
+		Optional<Order> currentOrder = orders.findByActiveTrueAndClubId(clubId);
+		if(currentOrder.isPresent()) {
+			return currentOrder.get();
+		}
+		return null;
 	}
 
-	@RequestMapping(method= PUT, value = "/orders/close", produces = "application/json")
-	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void close() {
-		currentOrder.setActive(false);
-		orders.save(currentOrder);
+	@RequestMapping(method= RequestMethod.PUT, value = "/clubs/{clubId}/orders")
+	public Order create(@PathVariable long clubId) {
+		Optional<Order> currentOrder = orders.findByActiveTrueAndClubId(clubId);
+		if(currentOrder.isPresent()) {
+			return currentOrder.get();
+		}
+		Order order = new Order();
+		order.setActive(true);
+		order.setClub(clubs.getOne(clubId));
+		return orders.save(order);
 	}
-
 }

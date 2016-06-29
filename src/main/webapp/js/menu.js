@@ -47,5 +47,3 @@ $.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
 		window.location.reload();
 	});
 });
-
-console.log("loaded menu.js");

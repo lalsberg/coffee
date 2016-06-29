@@ -56,4 +56,5 @@ public class ClubController {
 		clubs.save(club);
 		return ResponseEntity.ok().build();
 	}
+
 }
