@@ -4,8 +4,10 @@ $("#btnRegister").click(function() {
 		email : $("#email").val(),
 		name : $("#name").val(),
 		password : $("#password").val()
-	}, function(token) {
-		Cookies.set('jwtToken', token);
+	}, function(response) {
+		Cookies.set('userId', response.userId);
+		Cookies.set('jwtToken', response.token);
+		Cookies.remove('club');
 		window.location.replace("/pages/index.html");
 	});
 });

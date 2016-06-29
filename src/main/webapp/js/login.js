@@ -17,19 +17,22 @@ $("#btnLogin").click(function() {
 	});
 
 	function setSelectedClub(userId) {
-		$.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
-			if(clubs.length > 0) {
-				var selectedClub = {
-					name: clubs[0].name,
-					id: clubs[0].id
-				};
-
-				Cookies.set('club', selectedClub);
-			} else {
-				Cookies.remove('club');
+		$.ajax({
+			url: "http://localhost:8080/users/" + userId + "/clubs", 
+			async: false,
+			success: function(clubs) {
+				if(clubs.length > 0) {
+					var selectedClub = {
+						name: clubs[0].name,
+						id: clubs[0].id
+					};
+	
+					Cookies.set('club', selectedClub);
+				} else {
+					Cookies.remove('club');
+				}
 			}
 		});
-		
-		
 	}
+
 });

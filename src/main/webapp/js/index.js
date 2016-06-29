@@ -148,6 +148,8 @@ $(function() {
 		}
 		
 		$(".club-panel").show();
+	} else {
+		$(".no-club").show();
 	}
 });
 
