@@ -16,30 +16,45 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.lalsberg.coffee.coffee.Coffee;
 import br.com.lalsberg.coffee.coffee.Coffees;
+import br.com.lalsberg.coffee.order.Orders;
+import br.com.lalsberg.coffee.user.Users;
 
 @RestController
 public class UserOrderController {
 
 	private UserOrders userOrders;
 	private Coffees coffees;
+	private Orders orders;
+	private Users users;
 
 	@Autowired
-	public UserOrderController(UserOrders userOrders, Coffees coffees) {
+	public UserOrderController(UserOrders userOrders, Coffees coffees, Orders orders, Users users) {
 		this.userOrders = userOrders;
 		this.coffees = coffees;
+		this.orders = orders;
+		this.users = users;
 	}
 
 	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
 	public ResponseEntity<UserOrderCoffee> addCoffee(@PathVariable long clubId, @PathVariable long userId, @RequestBody UserOrderCoffee coffeeOrder) {
 		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(1, userId);
+
+		UserOrderCoffee updatedCoffeeOrder;
 		if(userOrder.isPresent()) {
 			userOrder.get().addCoffee(coffeeOrder);
+
+			updatedCoffeeOrder = userOrder.get().getCoffee(coffeeOrder.getCoffee()).get();
+			userOrders.save(userOrder.get());
+		} else {
+			UserOrder newUserOrder = new UserOrder();
+			newUserOrder.setOrder(orders.findByActiveTrueAndClubId(clubId).get());
+			newUserOrder.setUser(users.getOne(userId));
+			newUserOrder.addCoffee(coffeeOrder);
+
+			updatedCoffeeOrder = newUserOrder.getCoffee(coffeeOrder.getCoffee()).get();
+			userOrders.save(newUserOrder);
 		}
-		//TODO else create userorder com os coffees
 
-		UserOrderCoffee updatedCoffeeOrder = userOrder.get().getCoffee(coffeeOrder.getCoffee()).get();
-
-		userOrders.save(userOrder.get());
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(updatedCoffeeOrder);
 	}
 
@@ -87,7 +102,7 @@ public class UserOrderController {
 			List<Coffee> unorderedCoffees = allCoffees.stream().filter(coffee -> !orderedCoffeesIds.contains(coffee.getId())).collect(Collectors.toList());
 			return unorderedCoffees;
 		}
-		return null; //TODO erro
+		return allCoffees;
 	}
 
 	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}/price", produces = "application/json")
