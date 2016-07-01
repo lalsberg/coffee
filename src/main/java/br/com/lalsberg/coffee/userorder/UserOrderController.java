@@ -75,7 +75,7 @@ public class UserOrderController {
 
 	@RequestMapping(method= RequestMethod.DELETE, value = "/club/{clubId}/orders/user/{userId}/coffee/{coffeeId}", produces = "application/json")
 	public ResponseEntity<Void> removeCoffee(@PathVariable long clubId, @PathVariable long userId, @PathVariable long coffeeId) {
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(1, userId);
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
 		Coffee coffee = new Coffee();
 		coffee.setId(coffeeId);
 		userOrder.get().removeCoffee(coffee);
