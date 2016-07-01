@@ -22,15 +22,11 @@ $.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
 			}
 		}
 
-		if(clubs.length == 1) {
-			$("#uniqueClub").show();
-		} else {
-			$("#multipleClub").show();
-		}
+		$("#menuClub").show();
 
 	});
 
-	$("#multipleClub").on("click", ".anotherClub", function() {
+	$("#menuClub").on("click", ".anotherClub", function() {
 		var club = {
 			name: $(this).find("a").text(),
 			id: $(this).find("input[name='clubId']").val()

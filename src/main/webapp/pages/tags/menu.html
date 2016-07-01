@@ -13,22 +13,17 @@
 					<span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					<li><a href="/pages/club/create.html">Create new</a></li>
-					<li><a href="/pages/club/member.html">Members</a></li>
 				</ul>
 			</li>
 
-			<li id="uniqueClub" style="display:none">
-				<a href="#" class='selectedClubName'></a>
-				<input type='hidden' name='clubId' value="0"/>
-			</li>
-
-			<li id="multipleClub" class="dropdown" style="display:none">
+			<li id="menuClub" class="dropdown" style="display:none">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 					aria-expanded="false" hidden='true'> <label class="selectedClubName"></label>
 					<input type='hidden' name='clubId' value="0"/> 
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu otherClubs">
+					<li><a href="/pages/club/member.html">Members</a></li>
 					<li class="anotherClub">
 						<a href="#"></a>
 						<input type='hidden' name='clubId' value="0"/>
