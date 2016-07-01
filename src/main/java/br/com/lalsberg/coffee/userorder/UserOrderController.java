@@ -60,7 +60,7 @@ public class UserOrderController {
 
 	@RequestMapping(method= RequestMethod.PUT, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
 	public ResponseEntity<Void> changeCoffeeQuantity(@PathVariable long clubId, @PathVariable long userId, @RequestBody UserOrderCoffee coffeeOrder) {
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(1, userId);
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
 		if(userOrder.isPresent()) {
 			if(coffeeOrder.getQuantity() == 0) {
 				userOrder.get().removeCoffee(coffeeOrder.getCoffee());
