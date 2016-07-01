@@ -24,8 +24,7 @@ $(function() {
 							"<input type='text' name='coffeeQuantity' value='" + this.quantity + "'></input> " +
 							"<label class='coffeeName' style='font-weight:normal'>" + this.coffee.name + " </label>" +
 							"<label style='font-weight:normal; margin-left: 5px'>R$ </label>" +
-							"<label class='coffeePrice' style='font-weight:normal'>" + this.coffee.price + "</label>" +
-							"<button type='button' class='btn btn-danger btn-block' style='width: 80px'>Remover</button>" +
+							"<label class='coffeePrice' style='font-weight:normal'>" + this.coffee.price + "<a href='#'><span class='label label-danger' style='margin-left:5px'>X</span></a></label>" +
 							"<input type='hidden' name='coffeeId' value='" + this.coffee.id + "'>" +
 						"</li>";
 				});
@@ -78,8 +77,7 @@ $(function() {
 							"<input type='text' name='coffeeQuantity' value='" + coffeeQuantity + "'></input> " + 
 							"<label class='coffeeName' style='font-weight:normal'>" + coffeeName + "</label>" +
 							"<label style='font-weight:normal; margin-left:5px'>R$</label>" +
-							"<label class='coffeePrice' style='font-weight:normal'>" + coffeePrice + "</label>" +
-							"<button type='button' class='btn btn-danger btn-block' style='width: 80px'>Remover</button>" +
+							"<label class='coffeePrice' style='font-weight:normal'>" + coffeePrice + "<a href='#'><span class='label label-danger' style='margin-left:5px'>X</span></a></label>" +
 							"<input type='hidden' name='coffeeId' value='" + coffeeId + "'>" +
 						"</li>";
 	
@@ -93,7 +91,7 @@ $(function() {
 			var coffeeId = $(this).find("input[name='coffeeId']").val();
 			var coffeeQuantityInput = $(this).find("input[name='coffeeQuantity']");
 			var coffeeName = $(this).find(".coffeeName").text();
-			var coffeePrice = $(this).find(".coffeePrice").text();
+			var coffeePrice = $(this).find(".coffeePrice").text().substring(0, $(this).find(".coffeePrice").text().length -1);
 			var coffeeQuantity = coffeeQuantityInput.val();
 	
 			var coffeeOrder = {
@@ -127,17 +125,17 @@ $(function() {
 			});
 		});
 	
-		$("#orderedCoffees").on("click", ".btn-danger", function() {
+		$("#orderedCoffees").on("click", ".label-danger", function() {
 			var removeButton = $(this);
-			var coffeeId = removeButton.siblings("input[name='coffeeId']").val();
-			var coffeeName = $(this).siblings(".coffeeName").text();
-			var coffeePrice = $(this).siblings(".coffeePrice").text();
-			var coffeeQuantity = $(this).siblings("input[name='coffeeQuantity']").val();
+			var coffeeId = removeButton.parent().parent().siblings("input[name='coffeeId']").val();
+			var coffeeName = $(this).parent().parent().siblings(".coffeeName").text();
+			var coffeePrice = $(this).parent().parent().text().substring(0, $(this).parent().parent().text().length -1);
+			var coffeeQuantity = $(this).parent().parent().siblings("input[name='coffeeQuantity']").val();
 	
 			$.ajax("http://localhost:8080/club/" + clubId + "/orders/user/" + userId + "/coffee/" + coffeeId, {
 				type : 'DELETE',
 				success: function() {
-					removeButton.parent().remove();
+					removeButton.parent().parent().parent().remove();
 	
 					var removedCoffeeHtml = 
 						"<li class='list-group-item'>" +
