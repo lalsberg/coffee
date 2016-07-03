@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +39,7 @@ public class ClubController {
 	}
 
 	@RequestMapping(method= RequestMethod.POST, value = "/clubs/{clubId}/members", produces = "application/json")
-	public ResponseEntity<Void> addMembers(@PathVariable long clubId, @RequestBody List<Long> membersIds) {
+	public ResponseEntity<Void> addMembers(@PathVariable long clubId, @RequestParam String email) {
 		Club club = clubs.findOne(clubId);
 
 		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -49,9 +48,7 @@ public class ClubController {
 			return ResponseEntity.notFound().build();
 		}
 
-		membersIds.forEach(memberId -> {
-			club.addMember(users.getOne(memberId));
-		});
+		club.addMember(users.findByEmail(email).get());
 
 		clubs.save(club);
 		return ResponseEntity.ok().build();
