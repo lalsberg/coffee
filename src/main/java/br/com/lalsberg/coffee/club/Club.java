@@ -2,6 +2,7 @@ package br.com.lalsberg.coffee.club;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -57,8 +58,8 @@ public class Club {
 		return owner;
 	}
 
-	public List<ClubUser> getMembers() {
-		return members;
+	public List<User> getMembers() {
+		return members.stream().map(member -> member.getUser()).collect(Collectors.toList());
 	}
 
 	public void addMember(User user) {

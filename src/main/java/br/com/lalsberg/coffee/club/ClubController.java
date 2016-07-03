@@ -57,4 +57,10 @@ public class ClubController {
 		return ResponseEntity.ok().build();
 	}
 
+	@RequestMapping(method= RequestMethod.GET, value = "/clubs/{clubId}/members")
+	public List<User> getMembers(@PathVariable long clubId) {
+		Club club = clubs.findOne(clubId);
+		return club.getMembers();
+	}
+
 }
