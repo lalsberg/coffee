@@ -14,20 +14,21 @@
     </script>
     <div id="menu"></div>
 
-	<div class="panel panel-primary club-panel" style="width: 500px;  margin-left: 500px; margin-top: 20px; display:none">
-		<div class="panel-heading clubName"></div>
-		<div class="panel-body">
-			<label style="font-weight:normal">Total: R$</label>
-			<label class="cartPrice" style="font-weight:normal"></label>
-		</div>
-		<div class="panel panel-default" style="width: 400px; margin-left: 50px">
+	<div class="user-order-panel" style="display:none">
+		<div class="panel panel-default" style="width: 90%; margin-left: 5%; margin-right: 5%">
 			<div class="panel-heading">My Cart</div>
-	
-			<ul class="list-group" id="orderedCoffees"></ul>
-			<div class="panel-heading" style="margin-top: 30px">Add to cart:</div>
+			<label style="font-weight:normal; margin-left: 50%">Total: R$</label>
+			<label class="cartPrice" style="font-weight:normal"></label>
+			<div class="panel-body">
+			<ul class="list-group" id="orderedCoffees" style="width: 55%"></ul>
+			</div>
+			<!-- <ul class="list-group" id="coffees" style="overflow: scroll; height: 200px;"></ul> -->
+		</div>
+		
+		<div class="panel panel-default" style="width: 90%; margin-left: 5%; margin-right: 5%">
+			<div class="panel-heading">Add to cart:</div>
 			<ul class="list-group" id="coffees" style="overflow: scroll; height: 200px;"></ul>
 		</div>
-		<button type="button" class="btn btn-lg btn-primary btn-block">Close order</button>
 	</div>
 
 	<div class="no-club" style="width: 550px;  margin-left: 500px; margin-top: 20px; display:none">

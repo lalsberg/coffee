@@ -15,7 +15,6 @@ $(function() {
 		});
 
 		function showCurrentOrder() {
-			$(".clubName").text(jQuery.parseJSON(Cookies.get('club')).name);
 			$.get("http://localhost:8080/club/" + clubId + "/orders/user/" + userId, function(userOrder) {
 				var itemsHtml = "";
 				$(userOrder.coffees).each(function() {
@@ -48,7 +47,7 @@ $(function() {
 				$("#coffees").append(itemsHtml);
 			});
 
-			$(".club-panel").show();
+			$(".user-order-panel").show();
 		}
 
 		$("#coffees").on("change", ".list-group-item", function() {
