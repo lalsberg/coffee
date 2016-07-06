@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Clubb - Coffees</title>
+<link href="../../css/bootstrap/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<script src="../../js/jquery-2.2.4.min.js"></script>
+	<script> 
+    $(function(){
+      $("#menu").load("../tags/menu.html"); 
+    });
+    </script>
+<div id="menu"></div>
+
+<div class="container" style="width:400px; margin-top:20px">
+
+	<label for="name">Name</label>
+	<input type="text" name="name" id="newCoffeeName" class="form-control" placeholder='Coffee Name' autofocus required>
+	<label for="price" style="margin-top:2%">Price</label>
+	<input type="text" name="price" id="newCoffeePrice" class="form-control" placeholder='Coffee Price'>
+	<button type="button" id="btnAddCoffee" class="btn btn-lg btn-primary btn-block" style="margin-top: 10px">Add Coffee</button>
+
+	<table class="table" id="coffees" style="margin-top:15%">
+		<tr>
+			<td><label>Name</label></td>
+			<td><label>Price</label></td>
+			<td><label>Edit</label></td>
+		</tr>
+		<tr class="coffee" style="display:none">
+			<td>
+				<input type="hidden" name="coffeeId" value=""></input>
+				<input type="text" class="coffeeName" disabled value=""></input>
+			</td>
+			<td style="width:30%">
+				<input type="text" class="coffeePrice" disabled value="" style="width:50%"></input>
+			</td>
+			<td>
+				<a href="#" class="editCoffeeLink">edit</a>
+				<a href="#" class="saveCoffeeLink" style="display:none">save</a>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<script src="../../js/bootstrap/bootstrap.min.js"></script>
+<script src="../../js/js.cookie.js"></script>
+<script src="../../js/coffee.js"></script>
+</body>
+</html>
