@@ -37,6 +37,7 @@ public class LoginController {
 		if (BCrypt.checkpw(password, user.get().getPassword())) {
 			Map<String, String> response = new HashMap<String, String>();
 			response.put("userId", Long.toString(user.get().getId()));
+			response.put("username", user.get().getName());
 			response.put("token", token.generateTokenFromEmail(email));
 			return response;
 		}

@@ -11,6 +11,7 @@ $("#btnLogin").click(function() {
 		password : $("#password").val()
 	}, function(response) {
 		Cookies.set('userId', response.userId);
+		Cookies.set('username', response.username);
 		Cookies.set('jwtToken', response.token);
 		setSelectedClub(response.userId);
 		window.location.replace("/pages/index.html");

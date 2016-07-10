@@ -1,8 +1,11 @@
 var userId = Cookies.get('userId');
-
+var username = Cookies.get('username');
 var selectedClub = jQuery.parseJSON(Cookies.get('club'));
+
 $(".selectedClubName").text(selectedClub.name);
 $(".selectedClubName").siblings("input[name='clubId']").val(selectedClub.id);
+
+$(".username").text(username);
 
 $.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
 	var first = true;
@@ -42,4 +45,11 @@ $.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
 		Cookies.set('club', club);
 		window.location.reload();
 	});
+});
+
+$("#logout").click(function() {
+	Cookies.remove('jwtToken');
+	Cookies.remove('club');
+	Cookies.remove('userId');
+	Cookies.remove('username');
 });
