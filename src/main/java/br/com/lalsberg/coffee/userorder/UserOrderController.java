@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.com.lalsberg.coffee.coffee.Coffee;
 import br.com.lalsberg.coffee.coffee.Coffees;
 import br.com.lalsberg.coffee.order.Orders;
+import br.com.lalsberg.coffee.security.LoggedUser;
 import br.com.lalsberg.coffee.user.Users;
 
 @RestController
@@ -35,9 +37,10 @@ public class UserOrderController {
 		this.users = users;
 	}
 
-	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
-	public ResponseEntity<UserOrderCoffee> addCoffee(@PathVariable long clubId, @PathVariable long userId, @RequestBody UserOrderCoffee coffeeOrder) {
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/me", produces = "application/json")
+	public ResponseEntity<UserOrderCoffee> addCoffee(@PathVariable long clubId, @RequestBody UserOrderCoffee coffeeOrder) {
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
 
 		UserOrderCoffee updatedCoffeeOrder;
 		if(userOrder.isPresent()) {
@@ -48,7 +51,7 @@ public class UserOrderController {
 		} else {
 			UserOrder newUserOrder = new UserOrder();
 			newUserOrder.setOrder(orders.findByActiveTrueAndClubId(clubId).get());
-			newUserOrder.setUser(users.getOne(userId));
+			newUserOrder.setUser(users.getOne(loggedUser.getId()));
 			newUserOrder.addCoffee(coffeeOrder);
 
 			updatedCoffeeOrder = newUserOrder.getCoffee(coffeeOrder.getCoffee()).get();
@@ -58,9 +61,10 @@ public class UserOrderController {
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(updatedCoffeeOrder);
 	}
 
-	@RequestMapping(method= RequestMethod.PUT, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
-	public ResponseEntity<Void> changeCoffeeQuantity(@PathVariable long clubId, @PathVariable long userId, @RequestBody UserOrderCoffee coffeeOrder) {
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+	@RequestMapping(method= RequestMethod.PUT, value = "/club/{clubId}/orders/user/me", produces = "application/json")
+	public ResponseEntity<Void> changeCoffeeQuantity(@PathVariable long clubId, @RequestBody UserOrderCoffee coffeeOrder) {
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
 		if(userOrder.isPresent()) {
 			if(coffeeOrder.getQuantity() == 0) {
 				userOrder.get().removeCoffee(coffeeOrder.getCoffee());
@@ -73,9 +77,10 @@ public class UserOrderController {
 		return ResponseEntity.ok().build();
 	}
 
-	@RequestMapping(method= RequestMethod.DELETE, value = "/club/{clubId}/orders/user/{userId}/coffee/{coffeeId}", produces = "application/json")
-	public ResponseEntity<Void> removeCoffee(@PathVariable long clubId, @PathVariable long userId, @PathVariable long coffeeId) {
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+	@RequestMapping(method= RequestMethod.DELETE, value = "/club/{clubId}/orders/user/me/coffee/{coffeeId}", produces = "application/json")
+	public ResponseEntity<Void> removeCoffee(@PathVariable long clubId, @PathVariable long coffeeId) {
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
 		Coffee coffee = new Coffee();
 		coffee.setId(coffeeId);
 		userOrder.get().removeCoffee(coffee);
@@ -84,19 +89,22 @@ public class UserOrderController {
 		return ResponseEntity.ok().build();
 	}
 
-	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}", produces = "application/json")
-	public UserOrder get(@PathVariable long clubId, @PathVariable long userId) {
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/me", produces = "application/json")
+	public UserOrder get(@PathVariable long clubId) {
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
 		if(userOrder.isPresent()) {
 			return userOrder.get();
 		}
-		return null;
+		return null; //404
 	}
 
-	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}/unorderedCoffees", produces = "application/json")
-	public List<Coffee> listUnorderedCoffees(@PathVariable long clubId, @PathVariable long userId) {
+	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/me/unorderedCoffees", produces = "application/json")
+	public List<Coffee> listUnorderedCoffees(@PathVariable long clubId) {
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
+
 		List<Coffee> allCoffees = (List<Coffee>) coffees.findAll();
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
 		if(userOrder.isPresent()) {
 			Set<Long> orderedCoffeesIds = userOrder.get().getCoffees().stream().map(orderedCoffee -> orderedCoffee.getCoffee().getId()).collect(Collectors.toSet());
 			List<Coffee> unorderedCoffees = allCoffees.stream().filter(coffee -> !orderedCoffeesIds.contains(coffee.getId())).collect(Collectors.toList());
@@ -105,9 +113,11 @@ public class UserOrderController {
 		return allCoffees;
 	}
 
-	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/{userId}/price", produces = "application/json")
-	public double getPrice(@PathVariable long clubId, @PathVariable long userId) {
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, userId);
+	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/me/price", produces = "application/json")
+	public double getPrice(@PathVariable long clubId) {
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
 		return userOrder.get().getPrice();
 	}
+
 }

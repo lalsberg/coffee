@@ -1,13 +1,16 @@
-var userId = Cookies.get('userId');
 var username = Cookies.get('username');
-var selectedClub = jQuery.parseJSON(Cookies.get('club'));
 
-$(".selectedClubName").text(selectedClub.name);
-$(".selectedClubName").siblings("input[name='clubId']").val(selectedClub.id);
+var selectedClub;
+if(Cookies.get('club') != undefined) {
+	selectedClub = jQuery.parseJSON(Cookies.get('club'));
+
+	$(".selectedClubName").text(selectedClub.name);
+	$(".selectedClubName").siblings("input[name='clubId']").val(selectedClub.id);
+}
 
 $(".username").text(username);
 
-$.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
+$.get("http://localhost:8080/users/me/clubs", function(clubs) {
 	var first = true;
 	$(clubs).each(function(index) {
 		if(first){
@@ -50,6 +53,5 @@ $.get("http://localhost:8080/users/" + userId + "/clubs", function(clubs) {
 $("#logout").click(function() {
 	Cookies.remove('jwtToken');
 	Cookies.remove('club');
-	Cookies.remove('userId');
 	Cookies.remove('username');
 });

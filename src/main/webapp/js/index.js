@@ -1,7 +1,5 @@
 $(function() {
 
-	var userId = Cookies.get('userId');
-
 	if(Cookies.get('club') != undefined) {
 		var clubId = jQuery.parseJSON(Cookies.get('club')).id;
 	
@@ -15,7 +13,7 @@ $(function() {
 		});
 
 		function showCurrentOrder() {
-			$.get("http://localhost:8080/club/" + clubId + "/orders/user/" + userId, function(userOrder) {
+			$.get("http://localhost:8080/club/" + clubId + "/orders/user/me", function(userOrder) {
 				var itemsHtml = "";
 				$(userOrder.coffees).each(function() {
 					itemsHtml += 
@@ -32,7 +30,7 @@ $(function() {
 				$(".cartPrice").text(userOrder.price);
 			});
 		
-			$.get("http://localhost:8080/club/" + clubId + "/orders/user/" + userId + "/unorderedCoffees", function(coffees) {
+			$.get("http://localhost:8080/club/" + clubId + "/orders/user/me/unorderedCoffees", function(coffees) {
 				var itemsHtml = "";
 				$(coffees).each(function() {
 					itemsHtml += 
@@ -64,7 +62,7 @@ $(function() {
 				quantity: coffeeQuantity
 			};
 	
-			$.ajax("http://localhost:8080/club/" + clubId + "/orders/user/" + userId, { 
+			$.ajax("http://localhost:8080/club/" + clubId + "/orders/user/me", { 
 				data: JSON.stringify(coffeeOrder),
 				contentType : 'application/json', 
 				type : 'POST', 
@@ -100,7 +98,7 @@ $(function() {
 				quantity: coffeeQuantity
 			};
 	
-			$.ajax("http://localhost:8080/club/" + clubId + "/orders/user/" + userId, { 
+			$.ajax("http://localhost:8080/club/" + clubId + "/orders/user/me", { 
 				data: JSON.stringify(coffeeOrder),
 				contentType : 'application/json', 
 				type : 'PUT', 
@@ -131,7 +129,7 @@ $(function() {
 			var coffeePrice = $(this).parent().parent().text().substring(0, $(this).parent().parent().text().length -1);
 			var coffeeQuantity = $(this).parent().parent().siblings("input[name='coffeeQuantity']").val();
 	
-			$.ajax("http://localhost:8080/club/" + clubId + "/orders/user/" + userId + "/coffee/" + coffeeId, {
+			$.ajax("http://localhost:8080/club/" + clubId + "/orders/user/me/coffee/" + coffeeId, {
 				type : 'DELETE',
 				success: function() {
 					removeButton.parent().parent().parent().remove();
@@ -152,7 +150,7 @@ $(function() {
 		});
 	
 		function updateCartPrice() {
-			$.get("http://localhost:8080/club/" + clubId + "/orders/user/" + userId + "/price", function(price) {
+			$.get("http://localhost:8080/club/" + clubId + "/orders/user/me/price", function(price) {
 				$(".cartPrice").text(price);
 			});
 		}

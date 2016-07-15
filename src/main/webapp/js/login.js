@@ -10,16 +10,15 @@ $("#btnLogin").click(function() {
 		email : $("#email").val(),
 		password : $("#password").val()
 	}, function(response) {
-		Cookies.set('userId', response.userId);
 		Cookies.set('username', response.username);
 		Cookies.set('jwtToken', response.token);
-		setSelectedClub(response.userId);
+		setSelectedClub();
 		window.location.replace("/pages/index.html");
 	});
 
-	function setSelectedClub(userId) {
+	function setSelectedClub() {
 		$.ajax({
-			url: "http://localhost:8080/users/" + userId + "/clubs", 
+			url: "http://localhost:8080/users/me/clubs", 
 			async: false,
 			success: function(clubs) {
 				if(clubs.length > 0) {

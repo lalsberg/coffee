@@ -5,8 +5,8 @@ $("#btnRegister").click(function() {
 		name : $("#name").val(),
 		password : $("#password").val()
 	}, function(response) {
-		Cookies.set('userId', response.userId);
 		Cookies.set('jwtToken', response.token);
+		Cookies.set('username', $("#name").val());
 		Cookies.remove('club');
 		window.location.replace("/pages/index.html");
 	});
