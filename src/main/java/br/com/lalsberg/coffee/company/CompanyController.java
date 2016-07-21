@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.lalsberg.coffee.security.LoggedUser;
 import br.com.lalsberg.coffee.security.Token;
 import br.com.lalsberg.coffee.user.User;
 import br.com.lalsberg.coffee.user.Users;
@@ -61,19 +63,23 @@ public class CompanyController {
 	}
 
 	@RequestMapping(method= RequestMethod.POST, value = "/companies/{companyId}/members", produces = "application/json")
-	public ResponseEntity<Void> addMembers(@PathVariable long companyId, @RequestParam String email) {
+	public ResponseEntity<Void> addMembers(@PathVariable long companyId, @RequestParam String email, @RequestParam String name, @RequestParam String password) {
+
+		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Company company = companies.findOne(companyId);
 
-//		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(!company.getMembers().stream().anyMatch(member -> member.getId() == loggedUser.getId())) {
+			return ResponseEntity.notFound().build();
+		}
 
-		//TODO
-//		if(!company.isOwner(loggedUser.getId())) {
-//			return ResponseEntity.notFound().build();
-//		}
+		User user = new User();
+		String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+		user.setPassword(encryptedPassword);
+		user.setEmail(email);
+		user.setName(name);
 
-		company.addMember(users.findByEmail(email).get());
-
-		companies.save(company);
+		user.setCompany(company);
+		users.save(user);
 		return ResponseEntity.ok().build();
 	}
 

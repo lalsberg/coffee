@@ -4,9 +4,14 @@ $("#btnAddMember").click(function() {
 	var companyId = jQuery.parseJSON(Cookies.get('user')).company.id;
 
 	$.post("http://localhost:8080/companies/" + companyId + "/members", {
-		email : $("#newMemberEmail").val()
+		email : $("#newMemberEmail").val(),
+		name : $("#name").val(),
+		password : $("#password").val()
 	}, function() {
 		addToMemberlist($("#newMemberEmail").val());
+		$("#newMemberEmail").val("");
+		$("#name").val("")
+		$("#password").val("")
 	});
 });
 
