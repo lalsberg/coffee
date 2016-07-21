@@ -28,7 +28,6 @@ public class User {
 	@ManyToOne()
 	@JoinColumn(name = "company_id")
 	@JsonManagedReference
-//	@JsonIgnore
 	private Company company;
 
 	public User() {}

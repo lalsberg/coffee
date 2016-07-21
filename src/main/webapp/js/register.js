@@ -1,13 +1,13 @@
 $("#btnRegister").click(function() {
 
-	$.post("http://localhost:8080/users", {
+	$.post("http://localhost:8080/companies", {
 		email : $("#email").val(),
 		name : $("#name").val(),
-		password : $("#password").val()
+		password : $("#password").val(),
+		companyName : $("#companyName").val(),
 	}, function(response) {
+		Cookies.set('user', response.user);
 		Cookies.set('jwtToken', response.token);
-		Cookies.set('username', $("#name").val());
-		Cookies.remove('club');
 		window.location.replace("/pages/index.html");
 	});
 });

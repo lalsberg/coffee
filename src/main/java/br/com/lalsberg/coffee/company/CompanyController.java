@@ -1,18 +1,22 @@
 package br.com.lalsberg.coffee.company;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.lalsberg.coffee.security.LoggedUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.lalsberg.coffee.security.Token;
 import br.com.lalsberg.coffee.user.User;
 import br.com.lalsberg.coffee.user.Users;
 
@@ -21,25 +25,39 @@ public class CompanyController {
 
 	private Companies companies;
 	private Users users;
+	private Token token;
 
 	@Autowired
-	public CompanyController(Companies companies, Users users) {
+	public CompanyController(Companies companies, Users users, Token token) {
 		this.companies = companies;
 		this.users = users;
+		this.token = token;
 	}
 
-	//TODO not used yet
-	@RequestMapping(method= RequestMethod.POST, path = "/companies", produces = "application/json")
-	public ResponseEntity<Company> create(@RequestParam String name) {
-		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	@RequestMapping(method= RequestMethod.POST, path = "/companies")
+	public Map<String, String> create(@RequestParam String email, @RequestParam String name, 
+			@RequestParam String password, @RequestParam String companyName) {
 
-		User owner = new User(loggedUser.getId());
-		Company company = new Company(name);
-		company.addMember(owner);
-		//TODO set role owner
+		Company company = new Company(companyName);
 		Company persistedCompany = companies.save(company);
 
-		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(persistedCompany);
+		User user = new User();
+		String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+		user.setPassword(encryptedPassword);
+		user.setEmail(email);
+		user.setName(name);
+
+		user.setCompany(persistedCompany);
+		User persistedUser = users.save(user);
+
+		Map<String, String> response = new HashMap<String, String>();
+		try {
+			response.put("user", new ObjectMapper().writeValueAsString(persistedUser));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException();
+		}
+		response.put("token", token.generateTokenFromEmail(email));
+		return response;
 	}
 
 	@RequestMapping(method= RequestMethod.POST, value = "/companies/{companyId}/members", produces = "application/json")

@@ -9,15 +9,18 @@
 <body>
 
 <div class="container form-login">
-	<h2 class="form-signin-heading">Register</h2>
+	<h2 class="form-signin-heading">User</h2>
 	<label for="email">Email</label>
-	<input type="text" name="email" id="email" class="form-control" placeholder='email' autofocus required>
+	<input type="text" name="email" id="email" class="form-control" placeholder='User email' autofocus required>
 	<label for="name">Full name</label>
-	<input type="text" name="name" id="name" class="form-control" placeholder='full name' autofocus required>
+	<input type="text" name="name" id="name" class="form-control" placeholder='User full name' autofocus required>
 	<label for="password" style="margin-top: 5px">Password</label>
-	<input type="password" name="password" id="password" class="form-control" placeholder='password' required>
+	<input type="password" name="password" id="password" class="form-control" placeholder='User password' required>
+	<h2 class="form-signin-heading">Company</h2>
+	<label for="companyName">Name</label>
+	<input type="text" name="companyName" id="companyName" class="form-control" placeholder='Company name' required>
 	<button type="button" id="btnRegister" class="btn btn-lg btn-primary btn-block" style="margin-top: 10px">Register</button>
-	<a href="/pages/public/login.html" style="float: right">Login</a>
+	<a href="/pages/public/login.html" style="float: right">Back to login</a>
 </div>
 
 <script src="../../js/jquery-2.2.4.min.js"></script>
