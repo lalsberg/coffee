@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.lalsberg.coffee.club.Club;
+import br.com.lalsberg.coffee.company.Company;
 import br.com.lalsberg.coffee.userorder.UserOrder;
 
 @Entity
@@ -28,7 +28,7 @@ public class Order {
 	private List<UserOrder> userOrders = new ArrayList<UserOrder>();
 
 	@ManyToOne
-	private Club club;
+	private Company company;
 
 	public long getId() {
 		return id;
@@ -50,13 +50,13 @@ public class Order {
 		return userOrders;
 	}
 
+	public void setCompany(Company company) {
+		this.company = company;
+	}
+
 	@Override
 	public String toString() {
 		return "Order [id=" + id + ", active=" + active + "]";
-	}
-
-	public void setClub(Club club) {
-		this.club = club;
 	}
 
 }

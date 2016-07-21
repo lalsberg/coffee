@@ -13,10 +13,10 @@ public interface Orders extends CrudRepository<Order, Long> {
 	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.userOrders WHERE o.active = (:active)")
 	Optional<Order> findByActiveAndFetchUserOrdersEagerly(@Param("active") boolean active);
 
-	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.userOrders uo WHERE o.active = (:active) and o.club.id = (:clubId) and uo.user.id = (:userId)")
-	Optional<Order> findByActiveAndClubIdAndUserIdAndFetchUserOrdersEagerly(@Param("active") boolean active,
-			@Param("clubId") long clubId, @Param("userId") long userId);
+	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.userOrders uo WHERE o.active = (:active) and o.company.id = (:companyId) and uo.user.id = (:userId)")
+	Optional<Order> findByActiveAndCompanyIdAndUserIdAndFetchUserOrdersEagerly(@Param("active") boolean active,
+			@Param("companyId") long companyId, @Param("userId") long userId);
 
-	Optional<Order> findByActiveTrueAndClubId(long clubId);
+	Optional<Order> findByActiveTrueAndCompanyId(long companyId);
 
 }

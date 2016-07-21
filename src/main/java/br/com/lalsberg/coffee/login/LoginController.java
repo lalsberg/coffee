@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.lalsberg.coffee.security.Token;
 import br.com.lalsberg.coffee.user.User;
 import br.com.lalsberg.coffee.user.Users;
@@ -36,7 +39,11 @@ public class LoginController {
 		}
 		if (BCrypt.checkpw(password, user.get().getPassword())) {
 			Map<String, String> response = new HashMap<String, String>();
-			response.put("username", user.get().getName());
+			try {
+				response.put("user", new ObjectMapper().writeValueAsString(user.get()));
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException();
+			}
 			response.put("token", token.generateTokenFromEmail(email));
 			return response;
 		}

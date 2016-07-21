@@ -8,5 +8,5 @@ public interface UserOrders extends CrudRepository<UserOrder, Long>, UserOrdersC
 
 	Optional<UserOrder> findByUserIdAndOrderId(long userId, long orderId);
 
-	Optional<UserOrder> findByOrderActiveTrueAndOrderClubIdAndUserId(long clubId, long userId);
+	Optional<UserOrder> findByOrderActiveTrueAndUserId(long userId);
 }

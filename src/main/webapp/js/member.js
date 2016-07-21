@@ -1,9 +1,9 @@
 loadMembers();
 
 $("#btnAddMember").click(function() {
-	var clubId = jQuery.parseJSON(Cookies.get('club')).id;
+	var companyId = jQuery.parseJSON(Cookies.get('user')).company.id;
 
-	$.post("http://localhost:8080/clubs/" + clubId + "/members", {
+	$.post("http://localhost:8080/companies/" + companyId + "/members", {
 		email : $("#newMemberEmail").val()
 	}, function() {
 		addToMemberlist($("#newMemberEmail").val());
@@ -11,9 +11,9 @@ $("#btnAddMember").click(function() {
 });
 
 function loadMembers() {
-	var clubId = jQuery.parseJSON(Cookies.get('club')).id;
+	var companyId = jQuery.parseJSON(Cookies.get('user')).company.id;
 
-	$.get("http://localhost:8080/clubs/" + clubId + "/members", function(members) {
+	$.get("http://localhost:8080/companies/" + companyId + "/members", function(members) {
 		$(members).each(function() {
 			addToMemberlist(this.email);
 		});

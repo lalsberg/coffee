@@ -19,6 +19,7 @@ import br.com.lalsberg.coffee.coffee.Coffee;
 import br.com.lalsberg.coffee.coffee.Coffees;
 import br.com.lalsberg.coffee.order.Orders;
 import br.com.lalsberg.coffee.security.LoggedUser;
+import br.com.lalsberg.coffee.user.User;
 import br.com.lalsberg.coffee.user.Users;
 
 @RestController
@@ -37,10 +38,11 @@ public class UserOrderController {
 		this.users = users;
 	}
 
-	@RequestMapping(method= RequestMethod.POST, value = "/club/{clubId}/orders/user/me", produces = "application/json")
-	public ResponseEntity<UserOrderCoffee> addCoffee(@PathVariable long clubId, @RequestBody UserOrderCoffee coffeeOrder) {
+	//TODO add /coffeeId, assim como o delete. so a qtd viria como param. ou mudar para botao 'buy' e setar qtd sempre 1
+	@RequestMapping(method= RequestMethod.POST, value = "/me/orders/coffees", produces = "application/json")
+	public ResponseEntity<UserOrderCoffee> addCoffee(@RequestBody UserOrderCoffee coffeeOrder) {
 		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndUserId(loggedUser.getId());
 
 		UserOrderCoffee updatedCoffeeOrder;
 		if(userOrder.isPresent()) {
@@ -50,8 +52,9 @@ public class UserOrderController {
 			userOrders.save(userOrder.get());
 		} else {
 			UserOrder newUserOrder = new UserOrder();
-			newUserOrder.setOrder(orders.findByActiveTrueAndClubId(clubId).get());
-			newUserOrder.setUser(users.getOne(loggedUser.getId()));
+			User user = users.findOne(loggedUser.getId());
+			newUserOrder.setOrder(orders.findByActiveTrueAndCompanyId(user.getCompany().getId()).get());
+			newUserOrder.setUser(user);
 			newUserOrder.addCoffee(coffeeOrder);
 
 			updatedCoffeeOrder = newUserOrder.getCoffee(coffeeOrder.getCoffee()).get();
@@ -61,10 +64,11 @@ public class UserOrderController {
 		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(updatedCoffeeOrder);
 	}
 
-	@RequestMapping(method= RequestMethod.PUT, value = "/club/{clubId}/orders/user/me", produces = "application/json")
-	public ResponseEntity<Void> changeCoffeeQuantity(@PathVariable long clubId, @RequestBody UserOrderCoffee coffeeOrder) {
+	//TODO add /coffeeId, assim como o delete. so a qtd viria como param
+	@RequestMapping(method= RequestMethod.PUT, value = "/me/orders/coffees", produces = "application/json")
+	public ResponseEntity<Void> changeCoffeeQuantity(@RequestBody UserOrderCoffee coffeeOrder) {
 		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndUserId(loggedUser.getId());
 		if(userOrder.isPresent()) {
 			if(coffeeOrder.getQuantity() == 0) {
 				userOrder.get().removeCoffee(coffeeOrder.getCoffee());
@@ -77,10 +81,10 @@ public class UserOrderController {
 		return ResponseEntity.ok().build();
 	}
 
-	@RequestMapping(method= RequestMethod.DELETE, value = "/club/{clubId}/orders/user/me/coffee/{coffeeId}", produces = "application/json")
-	public ResponseEntity<Void> removeCoffee(@PathVariable long clubId, @PathVariable long coffeeId) {
+	@RequestMapping(method= RequestMethod.DELETE, value = "/me/orders/coffees/{coffeeId}", produces = "application/json")
+	public ResponseEntity<Void> removeCoffee(@PathVariable long coffeeId) {
 		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndUserId(loggedUser.getId());
 		Coffee coffee = new Coffee();
 		coffee.setId(coffeeId);
 		userOrder.get().removeCoffee(coffee);
@@ -89,20 +93,20 @@ public class UserOrderController {
 		return ResponseEntity.ok().build();
 	}
 
-	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/me", produces = "application/json")
-	public UserOrder get(@PathVariable long clubId) {
+	@RequestMapping(method= RequestMethod.GET, value = "/me/orders/coffees", produces = "application/json")
+	public UserOrder get() {
 		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndUserId(loggedUser.getId());
 		if(userOrder.isPresent()) {
 			return userOrder.get();
 		}
 		return null; //404
 	}
 
-	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/me/unorderedCoffees", produces = "application/json")
-	public List<Coffee> listUnorderedCoffees(@PathVariable long clubId) {
+	@RequestMapping(method= RequestMethod.GET, value = "/me/orders/unorderedCoffees", produces = "application/json")
+	public List<Coffee> listUnorderedCoffees() {
 		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndUserId(loggedUser.getId());
 
 		List<Coffee> allCoffees = (List<Coffee>) coffees.findAll();
 		if(userOrder.isPresent()) {
@@ -113,10 +117,10 @@ public class UserOrderController {
 		return allCoffees;
 	}
 
-	@RequestMapping(method= RequestMethod.GET, value = "/club/{clubId}/orders/user/me/price", produces = "application/json")
-	public double getPrice(@PathVariable long clubId) {
+	@RequestMapping(method= RequestMethod.GET, value = "/me/orders/price", produces = "application/json")
+	public double getPrice() {
 		LoggedUser loggedUser = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndOrderClubIdAndUserId(clubId, loggedUser.getId());
+		Optional<UserOrder> userOrder = userOrders.findByOrderActiveTrueAndUserId(loggedUser.getId());
 		return userOrder.get().getPrice();
 	}
 
