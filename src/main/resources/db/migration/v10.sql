@@ -1,7 +1,5 @@
 RENAME TABLE club TO company;
 
-DROP TABLE `club_user`;
-
 ALTER TABLE `user`
   ADD COLUMN company_id int(11) NOT NULL,
   ADD FOREIGN KEY fk_name(company_id) REFERENCES company(id);
